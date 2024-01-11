@@ -9,9 +9,11 @@ interface ServiceResult<T> {
   statusCode?: number;
 }
 
+const RequestConfig = { headers: { 'Content-Type': 'application/json' }, withCredentials: true };
+
 export const initializeGame = async ( side: PlayerSide ): Promise<ServiceResult<Game>> => {
   try {
-    const response = await axios.post(`${API_BASE_URL}`, { side: side });    
+    const response = await axios.post(`${API_BASE_URL}`, { side: side }, RequestConfig);
     const game: Game = response.data;
     return { data: game };
   } catch (error) {
@@ -20,11 +22,11 @@ export const initializeGame = async ( side: PlayerSide ): Promise<ServiceResult<
   }
 };
 
-export const hitCell = async (gameId: string, cellId: number) => {
+export const hitCell = async (gameId: string, cellId: number): Promise<ServiceResult<Game>> => {
   try {
-    console.log(`gameId: ${gameId}, cellId: ${cellId}`);
-    const response = await axios.patch(`${API_BASE_URL}`, { gameId, cellId });
-    return response.data;
+    const response = await axios.patch(`${API_BASE_URL}`, { gameId, cellId }, RequestConfig);
+    const game: Game = response.data;
+    return { data: game };
   } catch (error) {
     console.error('API Error:', error);
     throw error;

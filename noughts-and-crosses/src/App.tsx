@@ -17,7 +17,9 @@ function App() {
   const [field, setField] = useState<Cell[]>([]);
   const [selectedSide, setSelectedSide] = useState<PlayerSide | null>(null);
   const [gameId, setGameId] = useState<string | null>(null);
+  const [initialized, setInitialized] = useState<boolean>(false);
   const [count, setCount] = useState(0);
+
 
   useEffect(() => {
     const storedSide = localStorage.getItem('selectedSide');
@@ -26,7 +28,11 @@ function App() {
       setCount(count + 1);
       console.log(`Count is: ${count}`);
       setSelectedSide(storedSide as PlayerSide);
-      initializeStoredGame(storedSide as PlayerSide);
+      if (!initialized) {
+        console.log('Initializing stored game');
+        initializeStoredGame(storedSide as PlayerSide);
+        setInitialized(true);
+      }
     }
   }, []);
 
@@ -52,8 +58,8 @@ function App() {
 
   const handleCellClick = async (cellId: number) => {
     try {
-      const updatedGame = await hitCell(gameId!, cellId);
-      setField(updatedGame.Field);
+      const updatedGame = (await hitCell(gameId!, cellId)).data;
+      setField(updatedGame!.field);
     } catch (error) {
       // Handle error
     }
