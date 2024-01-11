@@ -11,9 +11,9 @@ interface ServiceResult<T> {
 
 export const initializeGame = async ( side: PlayerSide ): Promise<ServiceResult<Game>> => {
   try {
-    const response = await axios.post(`${API_BASE_URL}`, { side: side });
-    console.log(`resp data: ${response.data.field[0]}`);
-    return response.data;
+    const response = await axios.post(`${API_BASE_URL}`, { side: side });    
+    const game: Game = response.data;
+    return { data: game };
   } catch (error) {
     console.error('API Error:', error);
     throw error;
@@ -22,6 +22,7 @@ export const initializeGame = async ( side: PlayerSide ): Promise<ServiceResult<
 
 export const hitCell = async (gameId: string, cellId: number) => {
   try {
+    console.log(`gameId: ${gameId}, cellId: ${cellId}`);
     const response = await axios.patch(`${API_BASE_URL}`, { gameId, cellId });
     return response.data;
   } catch (error) {
