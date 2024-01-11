@@ -1,20 +1,21 @@
+// GameComponent.tsx
 import React, { useEffect, useState } from 'react';
-import { PlayerSide, Cell } from './Types';
-import { initializeGame, hitCell } from './services/apiService';
-import './App.css';
-
+import { PlayerSide, Cell } from '../Types';
+import { initializeGame, hitCell } from '../services/apiService';
 
 interface GameComponentProps {
   gameId: string;
 }
 
-function App() {
+const GameComponent: React.FC<GameComponentProps> = ({ gameId }) => {
   const [field, setField] = useState<Cell[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const game = (await initializeGame(PlayerSide.Cross)).data;
+        const result = await initializeGame(PlayerSide.Cross);
+        const game = result.data;
+        console.log(game);
         setField(game!.field);
       } catch (error) {
         // Handle error
@@ -26,7 +27,7 @@ function App() {
 
   const handleCellClick = async (cellId: number) => {
     try {
-      const updatedGame = await hitCell('1', cellId);
+      const updatedGame = await hitCell(gameId, cellId);
       setField(updatedGame.Field);
     } catch (error) {
       // Handle error
@@ -39,12 +40,12 @@ function App() {
       <div>
         {field.map((cell, index) => (
           <button key={index} onClick={() => handleCellClick(index)}>
-            {cell.Side == null ? '-' : cell.Side}
+            {cell.Side || '-'}
           </button>
         ))}
       </div>
     </div>
   );
-}
+};
 
-export default App;
+export default GameComponent;
