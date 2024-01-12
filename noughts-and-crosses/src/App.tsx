@@ -3,7 +3,6 @@ import { Cell } from './Types';
 import { initializeGame, hitCell } from './services/apiService';
 import './App.css';
 
-
 interface GameComponentProps {
   gameId: string;
 }
@@ -18,15 +17,12 @@ function App() {
   const [selectedSide, setSelectedSide] = useState<PlayerSide | null>(null);
   const [gameId, setGameId] = useState<string | null>(null);
   const [initialized, setInitialized] = useState<boolean>(false);
-  const [count, setCount] = useState(0);
 
 
   useEffect(() => {
     const storedSide = localStorage.getItem('selectedSide');
 
     if (storedSide && (storedSide === PlayerSide.Cross || storedSide === PlayerSide.Nought)) {
-      setCount(count + 1);
-      console.log(`Count is: ${count}`);
       setSelectedSide(storedSide as PlayerSide);
       if (!initialized) {
         console.log('Initializing stored game');
@@ -34,6 +30,10 @@ function App() {
         setInitialized(true);
       }
     }
+  }, [initialized]);
+
+  useEffect(() => {
+
   }, []);
 
   const initializeStoredGame = async (side: PlayerSide) => {
@@ -58,8 +58,13 @@ function App() {
 
   const handleCellClick = async (cellId: number) => {
     try {
-      const updatedGame = (await hitCell(gameId!, cellId)).data;
-      setField(updatedGame!.field);
+      const data = (await hitCell(gameId!, cellId)).data;
+      if (data){
+          console.log("Test!");
+//        try to use both for my own understanding
+          setField([...data.game.field]);
+//        setField(updatedGame!.field.map((cell) => ({ ...cell })));
+      }
     } catch (error) {
       // Handle error
     }
@@ -86,7 +91,7 @@ function App() {
           <div>
             {field.map((cell, index) => (
               <button key={index} onClick={() => handleCellClick(index)}>
-                {cell.Side == null ? '-' : cell.Side}
+                { cell.Side == null ? 'A' : cell.Side === 0 ? 'X' : 'O' }
               </button>
             ))}
           </div>
@@ -101,6 +106,5 @@ function App() {
     </div>
   );
 }
-
 
 export default App;

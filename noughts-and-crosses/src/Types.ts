@@ -12,3 +12,8 @@ export type Game = {
   gameId: string;
   field: Cell[];
 };
+
+export type ProcessGame = {
+  game: Game;
+  winner: PlayerSide | null;
+}

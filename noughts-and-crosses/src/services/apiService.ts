@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
-import { Game, PlayerSide } from '../Types'
+import { Game, PlayerSide, ProcessGame } from '../Types'
 
 const API_BASE_URL = 'http://localhost:5169/api/game';
 
@@ -22,11 +22,12 @@ export const initializeGame = async ( side: PlayerSide ): Promise<ServiceResult<
   }
 };
 
-export const hitCell = async (gameId: string, cellId: number): Promise<ServiceResult<Game>> => {
+export const hitCell = async (gameId: string, cellId: number): Promise<ServiceResult<ProcessGame>> => {
   try {
     const response = await axios.patch(`${API_BASE_URL}`, { gameId, cellId }, RequestConfig);
-    const game: Game = response.data;
-    return { data: game };
+    const data: ProcessGame = response.data;
+    data.game.field.map((cell) => {console.log(cell.Id, cell.Side)});
+    return { data: data };
   } catch (error) {
     console.error('API Error:', error);
     throw error;

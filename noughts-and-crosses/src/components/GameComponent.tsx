@@ -27,8 +27,8 @@ const GameComponent: React.FC<GameComponentProps> = ({ gameId }) => {
 
   const handleCellClick = async (cellId: number) => {
     try {
-      const updatedGame = (await hitCell(gameId, cellId)).data;
-      setField(updatedGame!.field);
+      const data = (await hitCell(gameId, cellId)).data;
+      setField(data!.game.field);
     } catch (error) {
       // Handle error
     }
